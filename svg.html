@@ -416,6 +416,45 @@
             font-size: 26px;
         }
 
+        .paper-plane-msg {
+            position: absolute;
+            left: 0;
+            top: 0;
+            z-index: 26;
+            pointer-events: none;
+            color: #5b446b;
+            font-weight: 700;
+            white-space: nowrap;
+            text-shadow: 0 2px 8px rgba(255, 255, 255, 0.9);
+            font-size: clamp(15px, 2.6vw, 19px);
+            animation: flyToRainbow 2.3s ease-in forwards;
+        }
+
+        .paper-plane-msg::before {
+            content: "✈ ";
+            color: #7f66b2;
+            font-size: 30px;
+            vertical-align: -3px;
+        }
+
+        @keyframes flyToRainbow {
+            0% {
+                opacity: 0;
+                transform: translate(var(--sx), var(--sy)) scale(0.9) rotate(-8deg);
+            }
+            10% {
+                opacity: 1;
+            }
+            70% {
+                opacity: 1;
+                transform: translate(var(--mx), var(--my)) scale(1.02) rotate(6deg);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(var(--ex), var(--ey)) scale(0.78) rotate(0deg);
+            }
+        }
+
         @keyframes floatUp {
             0% { opacity: 0; transform: translate(-50%, 0) scale(0.9); }
             12% { opacity: 1; }
@@ -604,12 +643,12 @@
             "如果晚上看到一颗亮亮的小星星，那就是我在说：我很好。"
         ];
 
-        const responses = [
-            "我收到啦，这份想念会变成今晚最亮的小星星。",
-            "我也爱你们。别怕，我只是去了一个很温柔的地方。",
-            "答应我，要好好吃饭，好好睡觉，也要偶尔笑一笑。",
-            "我会带着你们给我的爱，在彩虹桥上开心地跑。",
-            "你们想我的时候，就看看天空，我一直都听得到。",
+        const responseTails = [
+            "我把你的思念收好啦，会变成今晚最亮的小星星。",
+            "我也爱你们，我在这里一直很平安。",
+            "要好好吃饭、好好睡觉，也要记得多笑一笑。",
+            "我会带着你们的爱，在彩虹桥上开心地跑。",
+            "你们想我的时候，看看天空，我一直都听得到。",
             "谢谢你们给过我的家，那是我最幸福的地方。"
         ];
 
@@ -657,11 +696,7 @@
 
         function switchHead() {
             currentHeadIndex = (currentHeadIndex + 1) % headImages.length;
-            headImage.classList.add("switching");
-            window.setTimeout(() => {
-                headImage.src = headImages[currentHeadIndex];
-                headImage.classList.remove("switching");
-            }, 220);
+            headImage.src = headImages[currentHeadIndex];
         }
 
         function interactDog(message) {
@@ -682,11 +717,29 @@
             if (!text) return;
 
             const boardRect = document.querySelector(".message-board").getBoundingClientRect();
-            makeParticle("floating-text", text, boardRect.left + boardRect.width / 2, boardRect.top - 8);
+            const rainbow = document.querySelector(".rainbow").getBoundingClientRect();
+            const plane = document.createElement("div");
+            plane.className = "paper-plane-msg";
+            plane.innerText = text;
+            const startX = boardRect.left + boardRect.width * (0.46 + Math.random() * 0.08);
+            const startY = boardRect.top + boardRect.height * (0.42 + Math.random() * 0.2);
+            const midX = (startX + (rainbow.left + rainbow.width / 2)) / 2 + (Math.random() * 30 - 15);
+            const midY = Math.max(40, startY - 180);
+            const endX = rainbow.left + rainbow.width * 0.52;
+            const endY = rainbow.top + rainbow.height * 0.25;
+            plane.style.setProperty("--sx", `${startX}px`);
+            plane.style.setProperty("--sy", `${startY}px`);
+            plane.style.setProperty("--mx", `${midX}px`);
+            plane.style.setProperty("--my", `${midY}px`);
+            plane.style.setProperty("--ex", `${endX}px`);
+            plane.style.setProperty("--ey", `${endY}px`);
+            document.body.appendChild(plane);
+            window.setTimeout(() => plane.remove(), 2500);
             input.value = "";
 
             window.setTimeout(() => {
-                interactDog(responses[Math.floor(Math.random() * responses.length)]);
+                const tail = responseTails[Math.floor(Math.random() * responseTails.length)];
+                interactDog(`收到咯。${tail}`);
             }, 1200);
         }
 
@@ -699,7 +752,6 @@
 
         window.setTimeout(() => showMessage(), 700);
         window.setInterval(() => showMessage(), 11000);
-        window.setInterval(switchHead, 8500);
     </script>
 </body>
 </html>
