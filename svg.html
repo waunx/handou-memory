@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>憨豆在彩虹桥</title>
+    <style>
+        :root {
+            --ink: #423149;
+            --cream: rgba(255, 250, 240, 0.9);
+            --purple: #82659d;
+            --dog-black: #17161a;
+            --dog-soft: #28262c;
+            --dog-brown: #6b432b;
+            --dog-tan: #a46c3f;
+            --muzzle: #f8efe5;
+            --shirt: #0f5b4a;
+            --shirt-light: #47b783;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+        }
+
+        body {
+            margin: 0;
+            overflow: hidden;
+            color: var(--ink);
+            font-family: "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+            background:
+                radial-gradient(circle at 18% 18%, rgba(255, 255, 255, 0.78) 0 8%, transparent 22%),
+                radial-gradient(circle at 82% 16%, rgba(255, 237, 181, 0.82) 0 7%, transparent 21%),
+                linear-gradient(180deg, #9289d6 0%, #f2b3c5 48%, #ffe6bd 100%);
+        }
+
+        .scene {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            height: 100dvh;
+            min-height: 560px;
+            overflow: hidden;
+        }
+
+        .glow {
+            position: absolute;
+            inset: -20%;
+            background:
+                radial-gradient(circle at 50% 38%, rgba(255, 255, 230, 0.42), transparent 34%),
+                radial-gradient(circle at 42% 68%, rgba(255, 255, 255, 0.38), transparent 26%);
+            pointer-events: none;
+            animation: softGlow 5s ease-in-out infinite;
+        }
+
+        @keyframes softGlow {
+            50% { opacity: 0.72; transform: scale(1.02); }
+        }
+
+        .stars {
+            position: absolute;
+            inset: 0;
+            background-image:
+                radial-gradient(circle, rgba(255, 255, 255, 0.9) 0 1px, transparent 2px),
+                radial-gradient(circle, rgba(255, 248, 205, 0.86) 0 1px, transparent 2px);
+            background-size: 110px 150px, 170px 130px;
+            background-position: 24px 32px, 78px 68px;
+            opacity: 0.65;
+            animation: twinkle 3s ease-in-out infinite;
+        }
+
+        @keyframes twinkle {
+            50% { opacity: 0.35; }
+        }
+
+        .cloud {
+            position: absolute;
+            width: var(--w);
+            height: var(--h);
+            left: var(--x);
+            top: var(--y);
+            border-radius: 999px;
+            background: rgba(255, 250, 242, 0.82);
+            box-shadow:
+                32px -18px 0 8px rgba(255, 250, 242, 0.82),
+                70px -4px 0 3px rgba(255, 250, 242, 0.82),
+                105px 15px 0 -6px rgba(255, 250, 242, 0.82);
+            filter: blur(0.4px);
+            animation: cloudDrift var(--duration) linear infinite;
+            opacity: 0.8;
+        }
+
+        @keyframes cloudDrift {
+            from { transform: translateX(-20vw); }
+            to { transform: translateX(120vw); }
+        }
+
+        .rainbow {
+            position: absolute;
+            left: 50%;
+            bottom: 25vh;
+            width: min(760px, 118vw);
+            height: 300px;
+            transform: translateX(-50%);
+            border-radius: 50% 50% 0 0;
+            background:
+                radial-gradient(ellipse at center bottom,
+                    transparent 0 48%,
+                    rgba(255, 106, 137, 0.82) 49% 53%,
+                    rgba(255, 182, 99, 0.82) 54% 58%,
+                    rgba(255, 234, 106, 0.84) 59% 63%,
+                    rgba(108, 214, 130, 0.84) 64% 68%,
+                    rgba(111, 196, 255, 0.82) 69% 73%,
+                    rgba(181, 150, 255, 0.82) 74% 78%,
+                    transparent 79%);
+            filter: blur(0.2px) drop-shadow(0 18px 26px rgba(106, 84, 148, 0.2));
+            opacity: 0.9;
+        }
+
+        .grass {
+            position: absolute;
+            left: -6vw;
+            right: -6vw;
+            bottom: -40px;
+            height: 28vh;
+            min-height: 170px;
+            border-radius: 50% 50% 0 0 / 24% 24% 0 0;
+            background:
+                radial-gradient(ellipse at 50% 0%, rgba(255, 255, 232, 0.6) 0 9%, transparent 38%),
+                linear-gradient(180deg, #9be5a0 0%, #61bf78 100%);
+            box-shadow: inset 0 16px 0 rgba(255, 255, 255, 0.22);
+        }
+
+        .flower {
+            position: absolute;
+            bottom: var(--bottom);
+            left: var(--left);
+            font-size: var(--size);
+            opacity: 0.76;
+            animation: bob 2.4s ease-in-out infinite;
+        }
+
+        @keyframes bob {
+            50% { transform: translateY(-5px) rotate(2deg); }
+        }
+
+        #dog-container {
+            position: absolute;
+            left: 50%;
+            bottom: calc(13vh + 58px);
+            width: min(440px, 92vw);
+            transform: translateX(-50%);
+            cursor: pointer;
+            filter: drop-shadow(0 20px 22px rgba(74, 49, 92, 0.24));
+            animation: floatDog 3s ease-in-out infinite;
+            z-index: 10;
+        }
+
+        @keyframes floatDog {
+            50% { transform: translateX(-50%) translateY(-8px); }
+        }
+
+        .bubble {
+            position: absolute;
+            left: var(--bubble-left, 50%);
+            bottom: var(--bubble-bottom, 92%);
+            width: min(370px, 86vw);
+            padding: 13px 18px;
+            transform: translate(var(--bubble-x, -50%), 8px);
+            border: 6px solid transparent;
+            border-radius: 24px 24px 24px 12px;
+            background:
+                linear-gradient(#fffdf7, #fff8ea) padding-box,
+                repeating-linear-gradient(
+                    135deg,
+                    #0f5b4a 0 10px,
+                    #0f5b4a 10px 18px,
+                    #15151a 18px 28px,
+                    #15151a 28px 36px,
+                    #47b783 36px 45px
+                ) border-box;
+            box-shadow: 0 10px 28px rgba(91, 67, 132, 0.16), 0 0 0 2px rgba(255, 255, 255, 0.72);
+            color: #4b3653;
+            line-height: 1.55;
+            font-size: clamp(14px, 3.4vw, 17px);
+            font-family: "Comic Sans MS", "Marker Felt", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+            text-align: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: 0.35s ease;
+            z-index: 20;
+        }
+
+        .bubble-left {
+            --bubble-left: 10%;
+            --bubble-x: 0;
+            --bubble-bottom: 86%;
+        }
+
+        .bubble-right {
+            --bubble-left: 90%;
+            --bubble-x: -100%;
+            --bubble-bottom: 86%;
+        }
+
+        .bubble-center {
+            --bubble-left: 50%;
+            --bubble-x: -50%;
+            --bubble-bottom: 94%;
+        }
+
+        .bubble::after {
+            content: "";
+            position: absolute;
+            left: var(--tail-left, 48px);
+            bottom: -14px;
+            width: 22px;
+            height: 22px;
+            transform: rotate(45deg);
+            background:
+                linear-gradient(#fff8ea, #fff8ea) padding-box,
+                repeating-linear-gradient(
+                    135deg,
+                    #0f5b4a 0 8px,
+                    #15151a 8px 16px,
+                    #47b783 16px 22px
+                ) border-box;
+            border-right: 5px solid transparent;
+            border-bottom: 5px solid transparent;
+        }
+
+        .bubble-right::after {
+            left: auto;
+            right: 48px;
+        }
+
+        .bubble-center::after {
+            left: 50%;
+            transform: translateX(-50%) rotate(45deg);
+        }
+
+        .bubble.show {
+            opacity: 1;
+            transform: translate(var(--bubble-x, -50%), 0);
+        }
+
+        .bubble-text {
+            display: block;
+        }
+
+        .dog-svg {
+            display: none;
+            width: 100%;
+            height: auto;
+            overflow: visible;
+        }
+
+        .real-head {
+            display: block;
+            width: auto;
+            max-width: 100%;
+            max-height: min(58vh, 520px);
+            height: auto;
+            margin: 0 auto;
+            user-select: none;
+            -webkit-user-drag: none;
+            filter:
+                drop-shadow(0 0 1px rgba(255, 255, 255, 1))
+                drop-shadow(0 0 3px rgba(255, 255, 255, 0.95))
+                drop-shadow(0 0 7px rgba(255, 255, 255, 0.86))
+                drop-shadow(0 0 14px rgba(255, 245, 218, 0.68))
+                drop-shadow(0 12px 22px rgba(42, 26, 54, 0.24))
+                drop-shadow(0 0 32px rgba(255, 246, 204, 0.28));
+            animation: breathe 3.1s ease-in-out infinite;
+            transform-origin: 50% 72%;
+            transition: opacity 0.35s ease, transform 0.35s ease, filter 0.35s ease;
+        }
+
+        .real-head.switching {
+            opacity: 0;
+            transform: scale(0.98) translateY(4px);
+        }
+
+        .body-group {
+            animation: breathe 2.8s ease-in-out infinite;
+            transform-origin: 220px 325px;
+        }
+
+        @keyframes breathe {
+            50% { transform: translateY(-3px) scaleY(1.015); }
+        }
+
+        .tail {
+            animation: wag 0.75s ease-in-out infinite alternate;
+            transform-origin: 325px 255px;
+        }
+
+        @keyframes wag {
+            from { transform: rotate(-9deg); }
+            to { transform: rotate(17deg); }
+        }
+
+        .ear-left {
+            animation: earLeft 4s ease-in-out infinite;
+            transform-origin: 122px 126px;
+        }
+
+        .ear-right {
+            animation: earRight 4.4s ease-in-out infinite;
+            transform-origin: 310px 128px;
+        }
+
+        @keyframes earLeft {
+            50% { transform: rotate(-3deg) translateY(2px); }
+        }
+
+        @keyframes earRight {
+            50% { transform: rotate(4deg) translateY(2px); }
+        }
+
+        .eye-open {
+            animation: eyeOpen 5.2s linear infinite;
+        }
+
+        .eye-closed {
+            animation: eyeClosed 5.2s linear infinite;
+            opacity: 0;
+        }
+
+        @keyframes eyeOpen {
+            0%, 93%, 100% { opacity: 1; }
+            95%, 97% { opacity: 0; }
+        }
+
+        @keyframes eyeClosed {
+            0%, 93%, 100% { opacity: 0; }
+            95%, 97% { opacity: 1; }
+        }
+
+        .halo {
+            animation: halo 2s ease-in-out infinite;
+            transform-origin: 220px 58px;
+        }
+
+        @keyframes halo {
+            50% { opacity: 0.62; transform: translateY(-2px) scale(1.02); }
+        }
+
+        .message-board {
+            position: absolute;
+            left: 50%;
+            bottom: 18px;
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 10px;
+            width: min(680px, calc(100vw - 22px));
+            padding: 10px;
+            transform: translateX(-50%);
+            border: 1px solid rgba(130, 101, 157, 0.22);
+            border-radius: 22px;
+            background: rgba(255, 250, 240, 0.86);
+            backdrop-filter: blur(12px);
+            box-shadow: 0 12px 30px rgba(83, 57, 106, 0.18);
+            z-index: 30;
+        }
+
+        input,
+        button {
+            min-height: 44px;
+            border: 0;
+            border-radius: 15px;
+            font: inherit;
+        }
+
+        input {
+            width: 100%;
+            padding: 0 14px;
+            color: var(--ink);
+            background: rgba(255, 255, 255, 0.85);
+            outline: 1px solid rgba(130, 101, 157, 0.16);
+        }
+
+        button {
+            padding: 0 18px;
+            color: #fff;
+            background: linear-gradient(135deg, #8d70b2, #be83b6);
+            cursor: pointer;
+            box-shadow: 0 6px 16px rgba(126, 91, 154, 0.25);
+        }
+
+        .floating-text,
+        .heart {
+            position: absolute;
+            pointer-events: none;
+            z-index: 25;
+            animation: floatUp 5s ease-out forwards;
+        }
+
+        .floating-text {
+            max-width: min(420px, 82vw);
+            color: #5d4770;
+            font-weight: 700;
+            text-align: center;
+            text-shadow: 0 2px 8px rgba(255, 255, 255, 0.95);
+        }
+
+        .heart {
+            color: #f05c86;
+            font-size: 26px;
+        }
+
+        @keyframes floatUp {
+            0% { opacity: 0; transform: translate(-50%, 0) scale(0.9); }
+            12% { opacity: 1; }
+            100% { opacity: 0; transform: translate(-50%, -42vh) scale(1.16); }
+        }
+
+        @media (max-width: 720px) {
+            .scene {
+                min-height: 100dvh;
+            }
+
+            .cloud {
+                opacity: 0.62;
+                transform: scale(0.76);
+            }
+
+            .rainbow {
+                bottom: 34vh;
+                width: 138vw;
+                height: 235px;
+            }
+
+            #dog-container {
+                bottom: calc(18vh + 42px);
+                width: min(410px, 96vw);
+            }
+
+            .real-head {
+                max-height: 55vh;
+            }
+
+            .bubble {
+                bottom: 88%;
+                width: min(320px, 88vw);
+                padding: 10px 13px;
+            }
+
+            .message-board {
+                grid-template-columns: 1fr;
+                bottom: 12px;
+                border-radius: 18px;
+            }
+
+            input,
+            button {
+                min-height: 42px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main class="scene" aria-label="憨豆在彩虹桥上开心地向家人报平安">
+        <div class="glow" aria-hidden="true"></div>
+        <div class="stars" aria-hidden="true"></div>
+        <div class="cloud" style="--x: 0vw; --y: 15vh; --w: 155px; --h: 56px; --duration: 46s;" aria-hidden="true"></div>
+        <div class="cloud" style="--x: 54vw; --y: 22vh; --w: 130px; --h: 48px; --duration: 58s;" aria-hidden="true"></div>
+        <div class="rainbow" aria-hidden="true"></div>
+        <div class="grass" aria-hidden="true"></div>
+        <div class="flower" style="--left: 10%; --bottom: 16vh; --size: 22px;" aria-hidden="true">🌼</div>
+        <div class="flower" style="--left: 22%; --bottom: 20vh; --size: 19px;" aria-hidden="true">🌸</div>
+        <div class="flower" style="--left: 79%; --bottom: 17vh; --size: 23px;" aria-hidden="true">🌻</div>
+
+        <div id="dog-container" onclick="interactDog()" role="button" tabindex="0" aria-label="点击憨豆听她说话">
+            <div id="dog-bubble" class="bubble bubble-center">
+                <span id="bubble-text" class="bubble-text">我已经到彩虹桥啦，每天都有暖暖的阳光照着我。</span>
+            </div>
+            <img id="handou-head" class="real-head" src="handou-assets/handou-cutout-01-santa.png" alt="憨豆的照片抠图">
+
+            <svg class="dog-svg" viewBox="0 0 440 420" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <defs>
+                    <radialGradient id="blackFur" cx="45%" cy="35%" r="70%">
+                        <stop offset="0%" stop-color="#343139"/>
+                        <stop offset="55%" stop-color="#1c1a20"/>
+                        <stop offset="100%" stop-color="#100f13"/>
+                    </radialGradient>
+                    <radialGradient id="eyeBrown" cx="38%" cy="30%" r="70%">
+                        <stop offset="0%" stop-color="#80604b"/>
+                        <stop offset="55%" stop-color="#3b2720"/>
+                        <stop offset="100%" stop-color="#151013"/>
+                    </radialGradient>
+                    <linearGradient id="shirtGrad" x1="0" x2="1">
+                        <stop offset="0%" stop-color="#0c4c40"/>
+                        <stop offset="55%" stop-color="#12715a"/>
+                        <stop offset="100%" stop-color="#083b34"/>
+                    </linearGradient>
+                    <filter id="softShadow" x="-30%" y="-30%" width="160%" height="160%">
+                        <feDropShadow dx="0" dy="10" stdDeviation="7" flood-color="#4c335b" flood-opacity="0.18"/>
+                    </filter>
+                </defs>
+
+                <g class="halo" opacity="0.88">
+                    <ellipse cx="220" cy="62" rx="68" ry="14" fill="none" stroke="#fff4a8" stroke-width="9"/>
+                    <ellipse cx="220" cy="62" rx="68" ry="14" fill="none" stroke="#ffe474" stroke-width="3"/>
+                </g>
+
+                <g class="body-group" filter="url(#softShadow)">
+                    <g class="tail">
+                        <path d="M300 270 C346 264 382 229 372 188 C368 169 381 154 397 164 C419 178 412 220 386 250 C361 279 328 292 300 288 Z" fill="url(#blackFur)"/>
+                        <path d="M371 189 C368 171 381 154 397 164 C406 170 410 182 409 196 C396 183 383 181 371 195 Z" fill="#343139" opacity="0.72"/>
+                    </g>
+
+                    <path d="M118 262 C131 219 172 197 220 198 C268 197 309 219 322 262 C336 309 301 354 220 354 C139 354 104 309 118 262 Z" fill="url(#blackFur)"/>
+                    <path d="M126 251 C153 229 286 229 314 251 C320 285 304 321 278 338 C246 356 194 356 162 338 C136 321 120 285 126 251 Z" fill="url(#shirtGrad)"/>
+                    <path d="M134 266 C175 286 265 286 306 266" fill="none" stroke="var(--shirt-light)" stroke-width="10" opacity="0.78"/>
+                    <path d="M132 298 C172 319 268 319 308 298" fill="none" stroke="var(--shirt-light)" stroke-width="10" opacity="0.76"/>
+                    <path d="M182 218 C195 235 245 235 258 218 C253 243 187 243 182 218 Z" fill="#fff6ed"/>
+
+                    <path d="M160 305 C150 322 150 350 166 365 C181 379 207 372 207 350 C206 329 186 309 174 300 Z" fill="var(--dog-tan)"/>
+                    <path d="M266 300 C254 309 234 329 233 350 C233 372 259 379 274 365 C290 350 290 322 280 305 Z" fill="var(--dog-tan)"/>
+                    <ellipse cx="187" cy="365" rx="30" ry="13" fill="#9a6239"/>
+                    <ellipse cx="253" cy="365" rx="30" ry="13" fill="#9a6239"/>
+                    <path d="M177 351 C184 356 193 356 201 351" stroke="#7c4a2e" stroke-width="2" fill="none" opacity="0.45"/>
+                    <path d="M239 351 C247 356 256 356 263 351" stroke="#7c4a2e" stroke-width="2" fill="none" opacity="0.45"/>
+
+                    <g class="ear-left">
+                        <path d="M130 139 C100 108 65 86 43 105 C21 124 38 159 77 177 C101 188 128 169 138 145 Z" fill="url(#blackFur)"/>
+                        <path d="M113 143 C91 121 69 112 58 121 C47 130 60 151 84 162 C99 169 115 158 122 146 Z" fill="#5a392f" opacity="0.66"/>
+                    </g>
+                    <g class="ear-right">
+                        <path d="M308 139 C340 108 375 89 397 108 C418 127 400 160 361 178 C337 189 309 168 302 145 Z" fill="url(#blackFur)"/>
+                        <path d="M326 145 C350 122 373 115 383 126 C393 137 376 154 352 164 C337 170 324 158 318 147 Z" fill="#5a392f" opacity="0.6"/>
+                    </g>
+
+                    <path d="M109 156 C112 108 154 79 220 79 C286 79 328 108 331 156 C335 215 287 252 220 252 C153 252 105 215 109 156 Z" fill="url(#blackFur)"/>
+                    <path d="M141 101 C160 84 195 76 220 78 C245 76 280 84 299 101 C279 95 252 96 220 102 C188 96 161 95 141 101 Z" fill="#333039" opacity="0.88"/>
+                    <path d="M126 173 C119 204 141 234 176 246 C153 242 128 229 116 209 C106 191 109 174 126 173 Z" fill="#242129" opacity="0.88"/>
+                    <path d="M314 173 C321 204 299 234 264 246 C287 242 312 229 324 209 C334 191 331 174 314 173 Z" fill="#242129" opacity="0.88"/>
+
+                    <path d="M132 149 C142 124 164 115 189 123 C183 144 179 164 181 185 C155 190 136 178 132 149 Z" fill="var(--dog-brown)" opacity="0.74"/>
+                    <path d="M308 149 C298 124 276 115 251 123 C257 144 261 164 259 185 C285 190 304 178 308 149 Z" fill="var(--dog-brown)" opacity="0.74"/>
+                    <path d="M141 122 C153 110 174 105 191 111 C184 122 179 131 176 141 C162 135 149 131 141 122 Z" fill="var(--dog-tan)" opacity="0.84"/>
+                    <path d="M299 122 C287 110 266 105 249 111 C256 122 261 131 264 141 C278 135 291 131 299 122 Z" fill="var(--dog-tan)" opacity="0.84"/>
+
+                    <g class="eye-open">
+                        <ellipse cx="168" cy="164" rx="23" ry="27" fill="#f3e4d6"/>
+                        <ellipse cx="272" cy="164" rx="23" ry="27" fill="#f3e4d6"/>
+                        <ellipse cx="168" cy="166" rx="16" ry="19" fill="url(#eyeBrown)"/>
+                        <ellipse cx="272" cy="166" rx="16" ry="19" fill="url(#eyeBrown)"/>
+                        <circle cx="174" cy="158" r="5.2" fill="#fff"/>
+                        <circle cx="278" cy="158" r="5.2" fill="#fff"/>
+                        <circle cx="163" cy="174" r="2.8" fill="#fff" opacity="0.58"/>
+                        <circle cx="267" cy="174" r="2.8" fill="#fff" opacity="0.58"/>
+                    </g>
+                    <g class="eye-closed">
+                        <path d="M146 165 Q168 156 190 165" stroke="#2b2020" stroke-width="5" fill="none" stroke-linecap="round"/>
+                        <path d="M250 165 Q272 156 294 165" stroke="#2b2020" stroke-width="5" fill="none" stroke-linecap="round"/>
+                    </g>
+
+                    <path d="M185 191 C190 174 205 166 220 167 C235 166 250 174 255 191 C261 218 240 236 220 238 C200 236 179 218 185 191 Z" fill="var(--muzzle)"/>
+                    <path d="M177 205 C191 198 207 201 220 209 C233 201 249 198 263 205 C263 229 243 246 220 248 C197 246 177 229 177 205 Z" fill="#fff9f2"/>
+                    <path d="M203 189 C206 178 214 174 220 174 C226 174 234 178 237 189 C235 201 226 207 220 207 C214 207 205 201 203 189 Z" fill="#0d0c10"/>
+                    <ellipse cx="214" cy="183" rx="5" ry="4" fill="#48454d" opacity="0.8"/>
+                    <path d="M220 207 C219 218 211 222 202 220" stroke="#3d3032" stroke-width="3" fill="none" stroke-linecap="round"/>
+                    <path d="M220 207 C221 218 229 222 238 220" stroke="#3d3032" stroke-width="3" fill="none" stroke-linecap="round"/>
+
+                    <path d="M148 202 C122 195 101 196 82 204" stroke="#fff8f0" stroke-width="2.2" fill="none" stroke-linecap="round" opacity="0.88"/>
+                    <path d="M150 214 C121 213 100 218 82 229" stroke="#fff8f0" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.88"/>
+                    <path d="M292 202 C318 195 339 196 358 204" stroke="#fff8f0" stroke-width="2.2" fill="none" stroke-linecap="round" opacity="0.88"/>
+                    <path d="M290 214 C319 213 340 218 358 229" stroke="#fff8f0" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.88"/>
+
+                    <path d="M126 176 C116 187 111 199 110 211" stroke="#3c3740" stroke-width="1.4" fill="none" opacity="0.48"/>
+                    <path d="M314 176 C324 187 329 199 330 211" stroke="#3c3740" stroke-width="1.4" fill="none" opacity="0.48"/>
+                    <path d="M152 95 C140 105 132 118 128 134" stroke="#5b5661" stroke-width="1.2" fill="none" opacity="0.28"/>
+                    <path d="M288 95 C300 105 308 118 312 134" stroke="#5b5661" stroke-width="1.2" fill="none" opacity="0.28"/>
+                </g>
+            </svg>
+        </div>
+
+        <form class="message-board" onsubmit="sendMessage(event)">
+            <input type="text" id="user-input" placeholder="想对憨豆说点什么，她会在云朵上收到">
+            <button type="submit">送到彩虹桥</button>
+        </form>
+    </main>
+
+    <script>
+        const dogMessages = [
+            "我很开心，真的。这里的草地软软的，我跑起来一点也不累。",
+            "我已经到彩虹桥啦，每天都有暖暖的阳光照着我。",
+            "别担心我，我会在云朵上看着你们吃饭、睡觉、好好生活。",
+            "我还穿着那件绿黑条纹小衣服呢，风吹过来很舒服。",
+            "我知道你们很想我。我也想你们，但我现在很平安。",
+            "你们笑的时候，我的小尾巴就会摇得更快。",
+            "我在这里交到了很多新朋友，也会把你们的爱认真收好。",
+            "不要一直哭哦，我希望你们带着我的爱继续过好每一天。",
+            "我永远记得被你们抱着、摸摸头、叫我名字的日子。",
+            "如果晚上看到一颗亮亮的小星星，那就是我在说：我很好。"
+        ];
+
+        const responses = [
+            "我收到啦，这份想念会变成今晚最亮的小星星。",
+            "我也爱你们。别怕，我只是去了一个很温柔的地方。",
+            "答应我，要好好吃饭，好好睡觉，也要偶尔笑一笑。",
+            "我会带着你们给我的爱，在彩虹桥上开心地跑。",
+            "你们想我的时候，就看看天空，我一直都听得到。",
+            "谢谢你们给过我的家，那是我最幸福的地方。"
+        ];
+
+        const bubble = document.getElementById("dog-bubble");
+        const bubbleText = document.getElementById("bubble-text");
+        const dog = document.getElementById("dog-container");
+        const input = document.getElementById("user-input");
+        const headImage = document.getElementById("handou-head");
+        const headImages = [
+            "handou-assets/handou-cutout-01-santa.png",
+            "handou-assets/handou-cutout-02-front-shirt.png",
+            "handou-assets/handou-cutout-03-side-bed.png",
+            "handou-assets/handou-cutout-04-standing.png",
+            "handou-assets/handou-cutout-05-frame-shirt.png",
+            "handou-assets/handou-cutout-06-smile.png",
+            "handou-assets/handou-cutout-07-bed-look.png",
+            "handou-assets/handou-cutout-08-scarf-side.png",
+            "handou-assets/handou-cutout-09-shaved-full.png"
+        ];
+        let currentHeadIndex = 0;
+        const bubblePositions = ["bubble-left", "bubble-right", "bubble-center"];
+
+        function showMessage(message) {
+            bubbleText.innerText = message || dogMessages[Math.floor(Math.random() * dogMessages.length)];
+            bubble.classList.remove(...bubblePositions);
+            bubble.classList.add(bubblePositions[Math.floor(Math.random() * bubblePositions.length)]);
+            bubble.classList.add("show");
+            window.clearTimeout(showMessage.hideTimer);
+            showMessage.hideTimer = window.setTimeout(() => {
+                bubble.classList.remove("show");
+            }, 6200);
+        }
+
+        function makeParticle(className, text, x, y, delay = 0) {
+            window.setTimeout(() => {
+                const el = document.createElement("div");
+                el.className = className;
+                el.innerText = text;
+                el.style.left = `${x}px`;
+                el.style.top = `${y}px`;
+                document.body.appendChild(el);
+                window.setTimeout(() => el.remove(), 5600);
+            }, delay);
+        }
+
+        function switchHead() {
+            currentHeadIndex = (currentHeadIndex + 1) % headImages.length;
+            headImage.classList.add("switching");
+            window.setTimeout(() => {
+                headImage.src = headImages[currentHeadIndex];
+                headImage.classList.remove("switching");
+            }, 220);
+        }
+
+        function interactDog(message) {
+            showMessage(message);
+            switchHead();
+            const rect = dog.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const topY = rect.top + rect.height * 0.35;
+
+            for (let i = 0; i < 5; i += 1) {
+                makeParticle("heart", "♥", centerX + Math.random() * 110 - 55, topY + Math.random() * 46, i * 130);
+            }
+        }
+
+        function sendMessage(event) {
+            event.preventDefault();
+            const text = input.value.trim();
+            if (!text) return;
+
+            const boardRect = document.querySelector(".message-board").getBoundingClientRect();
+            makeParticle("floating-text", text, boardRect.left + boardRect.width / 2, boardRect.top - 8);
+            input.value = "";
+
+            window.setTimeout(() => {
+                interactDog(responses[Math.floor(Math.random() * responses.length)]);
+            }, 1200);
+        }
+
+        dog.addEventListener("keydown", (event) => {
+            if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                interactDog();
+            }
+        });
+
+        window.setTimeout(() => showMessage(), 700);
+        window.setInterval(() => showMessage(), 11000);
+        window.setInterval(switchHead, 8500);
+    </script>
+</body>
+</html>
