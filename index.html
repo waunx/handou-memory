@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>憨豆的小小天堂</title>
+    <style>
+        :root {
+            --ink: #2f2142;
+            --panel: rgba(255, 248, 238, 0.88);
+            --pixel-border: #6a4b83;
+            --night: #29336f;
+            --sunset: #f9b4bc;
+            --cloud: #fff7ea;
+            --grass: #79d48b;
+            --grass-dark: #49a968;
+            --dog-black: #17161c;
+            --dog-soft-black: #25232a;
+            --dog-brown: #8a5b35;
+            --dog-tan: #bd8150;
+            --muzzle: #fff2df;
+            --shirt: #0e5b48;
+            --shirt-stripe: #57c18a;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+        }
+
+        body {
+            margin: 0;
+            overflow: hidden;
+            color: var(--ink);
+            font-family: "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+            image-rendering: pixelated;
+            background:
+                linear-gradient(180deg, #2b3171 0%, #6b70b6 28%, #f5a8bb 62%, #ffe5b7 100%);
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            background:
+                linear-gradient(rgba(255, 255, 255, 0.05) 2px, transparent 2px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.04) 2px, transparent 2px);
+            background-size: 16px 16px;
+            mix-blend-mode: screen;
+            opacity: 0.55;
+            z-index: 40;
+        }
+
+        .scene {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            height: 100dvh;
+            min-height: 560px;
+            overflow: hidden;
+        }
+
+        .stars {
+            position: absolute;
+            inset: 0;
+            background-image:
+                radial-gradient(circle, rgba(255, 255, 255, 0.95) 0 2px, transparent 3px),
+                radial-gradient(circle, rgba(255, 245, 190, 0.9) 0 2px, transparent 3px);
+            background-position: 7vw 8vh, 17vw 18vh;
+            background-size: 17vw 19vh, 23vw 21vh;
+            animation: twinkle 2.8s steps(2) infinite;
+            opacity: 0.75;
+            z-index: 0;
+        }
+
+        @keyframes twinkle {
+            50% { opacity: 0.35; transform: translateY(2px); }
+        }
+
+        .moon {
+            position: absolute;
+            top: 42px;
+            right: 12vw;
+            width: 92px;
+            height: 92px;
+            background: #fff1af;
+            border: 6px solid #72569f;
+            box-shadow: 0 0 0 8px rgba(255, 241, 175, 0.22), 0 0 60px rgba(255, 239, 186, 0.6);
+            clip-path: polygon(0 18%, 18% 18%, 18% 0, 82% 0, 82% 18%, 100% 18%, 100% 82%, 82% 82%, 82% 100%, 18% 100%, 18% 82%, 0 82%);
+            z-index: 1;
+        }
+
+        .cloud {
+            position: absolute;
+            width: var(--w);
+            height: var(--h);
+            left: var(--x);
+            top: var(--y);
+            background: var(--cloud);
+            border: 5px solid rgba(106, 75, 131, 0.35);
+            box-shadow:
+                22px -14px 0 4px var(--cloud),
+                50px -4px 0 2px var(--cloud),
+                78px 9px 0 -2px var(--cloud),
+                0 8px 0 rgba(150, 111, 149, 0.18);
+            clip-path: polygon(0 25%, 18% 25%, 18% 8%, 44% 8%, 44% 0, 70% 0, 70% 18%, 100% 18%, 100% 82%, 82% 82%, 82% 100%, 12% 100%, 12% 82%, 0 82%);
+            animation: cloudDrift var(--duration) linear infinite;
+            opacity: 0.92;
+            z-index: 2;
+        }
+
+        .cloud.small {
+            transform: scale(0.72);
+            opacity: 0.72;
+        }
+
+        @keyframes cloudDrift {
+            from { translate: -18vw 0; }
+            to { translate: 118vw 0; }
+        }
+
+        .heaven-gate {
+            position: absolute;
+            left: 50%;
+            bottom: 45vh;
+            width: 280px;
+            height: 126px;
+            transform: translateX(-50%);
+            z-index: 3;
+        }
+
+        .heaven-gate::before,
+        .heaven-gate::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            width: 42px;
+            height: 104px;
+            background: #fff7df;
+            border: 5px solid #8e73b9;
+            box-shadow: 0 6px 0 rgba(83, 65, 124, 0.25);
+        }
+
+        .heaven-gate::before { left: 36px; }
+        .heaven-gate::after { right: 36px; }
+
+        .gate-arch {
+            position: absolute;
+            left: 50%;
+            top: 0;
+            width: 178px;
+            height: 96px;
+            transform: translateX(-50%);
+            border: 6px solid #8e73b9;
+            border-bottom: 0;
+            background: rgba(255, 247, 223, 0.58);
+            clip-path: polygon(0 100%, 0 58%, 12% 58%, 12% 34%, 25% 34%, 25% 18%, 42% 18%, 42% 4%, 58% 4%, 58% 18%, 75% 18%, 75% 34%, 88% 34%, 88% 58%, 100% 58%, 100% 100%);
+        }
+
+        .rainbow-bridge {
+            position: absolute;
+            left: 50%;
+            bottom: 27vh;
+            width: min(760px, 105vw);
+            height: 280px;
+            transform: translateX(-50%);
+            border-radius: 50% 50% 0 0;
+            background:
+                radial-gradient(ellipse at center bottom, transparent 0 49%, #f86e8d 50% 54%, #ffb866 55% 59%, #ffe66f 60% 64%, #74de86 65% 69%, #73c8ff 70% 74%, #b99bff 75% 79%, transparent 80%);
+            filter: drop-shadow(0 10px 0 rgba(91, 67, 132, 0.22));
+            opacity: 0.95;
+            z-index: 4;
+        }
+
+        .ground {
+            position: absolute;
+            left: -5vw;
+            right: -5vw;
+            bottom: -32px;
+            height: 28vh;
+            min-height: 180px;
+            background:
+                linear-gradient(90deg, rgba(255,255,255,0.18) 0 10px, transparent 10px 20px),
+                linear-gradient(180deg, var(--grass) 0%, var(--grass-dark) 100%);
+            border-top: 8px solid rgba(255, 252, 221, 0.75);
+            clip-path: polygon(0 18%, 8% 12%, 18% 18%, 28% 8%, 38% 16%, 49% 7%, 60% 15%, 72% 9%, 84% 17%, 100% 10%, 100% 100%, 0 100%);
+            z-index: 7;
+        }
+
+        .flowers {
+            position: absolute;
+            inset: auto 0 14vh;
+            height: 80px;
+            z-index: 8;
+        }
+
+        .flower {
+            position: absolute;
+            left: var(--x);
+            bottom: var(--b);
+            width: 12px;
+            height: 12px;
+            background: var(--c);
+            box-shadow:
+                -10px 0 var(--c),
+                10px 0 var(--c),
+                0 -10px var(--c),
+                0 10px var(--c),
+                0 0 #fff3a6;
+            animation: flowerBob 1.9s steps(2) infinite;
+        }
+
+        .flower::after {
+            content: "";
+            position: absolute;
+            left: 4px;
+            top: 12px;
+            width: 4px;
+            height: 34px;
+            background: #2f8d55;
+        }
+
+        @keyframes flowerBob {
+            50% { transform: translateY(-4px); }
+        }
+
+        #dog-container {
+            position: absolute;
+            left: 50%;
+            bottom: calc(13vh + 58px);
+            width: min(440px, 88vw);
+            transform: translateX(-50%);
+            cursor: pointer;
+            z-index: 12;
+            animation: dogFloat 2.2s steps(3) infinite;
+        }
+
+        #dog-container:hover {
+            filter: drop-shadow(0 0 18px rgba(255, 244, 198, 0.8));
+        }
+
+        @keyframes dogFloat {
+            50% { translate: 0 -8px; }
+        }
+
+        #dog-container.state-walk {
+            animation: dogWalk 2.4s steps(8) infinite;
+        }
+
+        #dog-container.state-wet {
+            animation: dogShake 0.72s steps(5) infinite;
+        }
+
+        @keyframes dogWalk {
+            0%, 100% { translate: -28px 0; }
+            50% { translate: 28px -7px; }
+        }
+
+        @keyframes dogShake {
+            0%, 100% { translate: 0 0; rotate: 0deg; }
+            20% { translate: -5px -2px; rotate: -3deg; }
+            40% { translate: 6px 1px; rotate: 3deg; }
+            60% { translate: -4px 2px; rotate: -2deg; }
+            80% { translate: 4px -1px; rotate: 2deg; }
+        }
+
+        .bubble {
+            position: absolute;
+            left: 50%;
+            bottom: 92%;
+            width: min(360px, 78vw);
+            padding: 14px 16px;
+            transform: translate(-50%, 10px);
+            color: var(--ink);
+            font-size: clamp(14px, 2.8vw, 18px);
+            line-height: 1.55;
+            text-align: center;
+            background: #fff9ec;
+            border: 4px solid var(--pixel-border);
+            box-shadow: 0 6px 0 rgba(56, 39, 84, 0.32);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s steps(4), transform 0.25s steps(4);
+            z-index: 21;
+        }
+
+        .bubble::after {
+            content: "";
+            position: absolute;
+            left: 50%;
+            bottom: -18px;
+            width: 24px;
+            height: 18px;
+            transform: translateX(-50%);
+            background: #fff9ec;
+            border-right: 4px solid var(--pixel-border);
+            border-bottom: 4px solid var(--pixel-border);
+            clip-path: polygon(0 0, 100% 0, 50% 100%);
+        }
+
+        .bubble.show {
+            opacity: 1;
+            transform: translate(-50%, 0);
+        }
+
+        .dog-svg {
+            display: block;
+            width: 100%;
+            height: auto;
+            overflow: visible;
+            filter: drop-shadow(0 12px 0 rgba(57, 40, 76, 0.22));
+            shape-rendering: crispEdges;
+        }
+
+        .dog-body {
+            animation: breathe 2.4s steps(2) infinite;
+            transform-origin: 220px 330px;
+        }
+
+        @keyframes breathe {
+            50% { transform: translateY(-4px) scaleY(1.02); }
+        }
+
+        .tail {
+            animation: tailWag 0.52s steps(3) infinite alternate;
+            transform-origin: 333px 262px;
+        }
+
+        @keyframes tailWag {
+            from { transform: rotate(-10deg); }
+            to { transform: rotate(18deg); }
+        }
+
+        .ear-left {
+            animation: earLeft 3.4s steps(2) infinite;
+            transform-origin: 128px 132px;
+        }
+
+        .ear-right {
+            animation: earRight 4s steps(2) infinite;
+            transform-origin: 302px 133px;
+        }
+
+        @keyframes earLeft {
+            50% { transform: rotate(-3deg) translateY(3px); }
+        }
+
+        @keyframes earRight {
+            50% { transform: rotate(4deg) translateY(2px); }
+        }
+
+        .eyes-open {
+            animation: blinkOpen 5.2s steps(1) infinite;
+        }
+
+        .eyes-closed {
+            animation: blinkClosed 5.2s steps(1) infinite;
+            opacity: 0;
+        }
+
+        @keyframes blinkOpen {
+            0%, 92%, 100% { opacity: 1; }
+            94%, 97% { opacity: 0; }
+        }
+
+        @keyframes blinkClosed {
+            0%, 92%, 100% { opacity: 0; }
+            94%, 97% { opacity: 1; }
+        }
+
+        .halo {
+            animation: haloGlow 1.6s steps(2) infinite;
+        }
+
+        @keyframes haloGlow {
+            50% { opacity: 0.65; transform: translateY(-2px); }
+        }
+
+        .santa-hat,
+        .water-drops {
+            opacity: 0;
+            transition: opacity 0.2s steps(2);
+        }
+
+        #dog-container.state-christmas .santa-hat,
+        #dog-container.state-wet .water-drops {
+            opacity: 1;
+        }
+
+        #dog-container.state-walk .front-left-leg {
+            animation: stepLeft 0.52s steps(2) infinite;
+            transform-origin: 170px 308px;
+        }
+
+        #dog-container.state-walk .front-right-leg {
+            animation: stepRight 0.52s steps(2) infinite;
+            transform-origin: 272px 308px;
+        }
+
+        #dog-container.state-wet .water-drops {
+            animation: waterSplash 0.72s steps(3) infinite;
+        }
+
+        @keyframes stepLeft {
+            50% { transform: translateX(-9px) translateY(-5px); }
+        }
+
+        @keyframes stepRight {
+            50% { transform: translateX(9px) translateY(5px); }
+        }
+
+        @keyframes waterSplash {
+            50% { transform: translateX(8px); opacity: 0.55; }
+        }
+
+        .message-board {
+            position: absolute;
+            left: 50%;
+            bottom: 24px;
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 10px;
+            width: min(720px, calc(100vw - 24px));
+            padding: 12px;
+            transform: translateX(-50%);
+            background: rgba(255, 249, 236, 0.92);
+            border: 4px solid var(--pixel-border);
+            box-shadow: 0 7px 0 rgba(56, 39, 84, 0.36);
+            z-index: 28;
+        }
+
+        input,
+        button {
+            min-height: 46px;
+            border: 0;
+            font: inherit;
+        }
+
+        input {
+            width: 100%;
+            padding: 0 14px;
+            color: var(--ink);
+            background: #fffef6;
+            outline: 3px solid rgba(106, 75, 131, 0.25);
+        }
+
+        input:focus {
+            outline-color: #a182ce;
+        }
+
+        button {
+            padding: 0 18px;
+            color: #fffef6;
+            background: #8f67c8;
+            border-left: 5px solid #b99bff;
+            border-bottom: 5px solid #5e438a;
+            cursor: pointer;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+        }
+
+        .floating-text,
+        .heart-particle,
+        .paw-particle {
+            position: absolute;
+            pointer-events: none;
+            z-index: 23;
+            animation: floatToHeaven 5s steps(20) forwards;
+            text-shadow: 2px 2px 0 rgba(255, 255, 255, 0.8);
+        }
+
+        .floating-text {
+            max-width: min(420px, 80vw);
+            color: #5e438a;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        .heart-particle {
+            color: #ff5b8a;
+            font-size: 28px;
+        }
+
+        .paw-particle {
+            color: rgba(77, 53, 104, 0.45);
+            font-size: 22px;
+            animation-duration: 3.4s;
+        }
+
+        @keyframes floatToHeaven {
+            0% { opacity: 0; transform: translate(-50%, 0) scale(0.9); }
+            12% { opacity: 1; }
+            100% { opacity: 0; transform: translate(-50%, -46vh) scale(1.12); }
+        }
+
+        @media (max-width: 720px) {
+            .scene {
+                min-height: 100dvh;
+            }
+
+            .moon {
+                top: 18px;
+                right: 8vw;
+                width: 64px;
+                height: 64px;
+                border-width: 4px;
+            }
+
+            .cloud {
+                --w: 116px !important;
+                --h: 42px !important;
+                border-width: 4px;
+            }
+
+            .heaven-gate {
+                bottom: 50vh;
+                transform: translateX(-50%) scale(0.68);
+            }
+
+            .rainbow-bridge {
+                bottom: 34vh;
+                width: 136vw;
+                height: 230px;
+            }
+
+            #dog-container {
+                bottom: calc(18vh + 44px);
+                width: min(360px, 94vw);
+            }
+
+            .bubble {
+                bottom: 88%;
+                width: min(320px, 86vw);
+                padding: 10px 12px;
+                font-size: 14px;
+            }
+
+            .message-board {
+                grid-template-columns: 1fr;
+                bottom: 14px;
+                width: calc(100vw - 18px);
+                padding: 10px;
+            }
+
+            input,
+            button {
+                min-height: 42px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main class="scene" aria-label="憨豆在彩虹桥上开心地向家人报平安">
+        <div class="stars"></div>
+        <div class="moon" aria-hidden="true"></div>
+
+        <div class="cloud" style="--x: 4vw; --y: 20vh; --w: 150px; --h: 54px; --duration: 42s;"></div>
+        <div class="cloud small" style="--x: 38vw; --y: 14vh; --w: 132px; --h: 46px; --duration: 55s;"></div>
+        <div class="cloud" style="--x: 72vw; --y: 26vh; --w: 164px; --h: 58px; --duration: 48s;"></div>
+
+        <div class="heaven-gate" aria-hidden="true">
+            <div class="gate-arch"></div>
+        </div>
+        <div class="rainbow-bridge" aria-hidden="true"></div>
+        <div class="ground" aria-hidden="true"></div>
+
+        <div class="flowers" aria-hidden="true">
+            <span class="flower" style="--x: 9%; --b: 10px; --c: #ffe46d;"></span>
+            <span class="flower" style="--x: 18%; --b: 32px; --c: #ff8eb1;"></span>
+            <span class="flower" style="--x: 77%; --b: 18px; --c: #fff06f;"></span>
+            <span class="flower" style="--x: 88%; --b: 42px; --c: #bda3ff;"></span>
+        </div>
+
+        <div id="dog-container" onclick="interactDog()" role="button" tabindex="0" aria-label="点击憨豆听她说话">
+            <div id="dog-bubble" class="bubble">我已经到彩虹桥啦，每天都有暖暖的阳光照着我。</div>
+
+            <svg class="dog-svg" viewBox="0 0 440 420" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <g class="santa-hat">
+                    <rect x="178" y="54" width="86" height="22" fill="#fff7f1"/>
+                    <rect x="188" y="24" width="70" height="30" fill="#e53935"/>
+                    <rect x="210" y="4" width="48" height="24" fill="#e53935"/>
+                    <rect x="246" y="10" width="28" height="28" fill="#fff7f1"/>
+                    <rect x="250" y="14" width="18" height="18" fill="#fff"/>
+                    <rect x="170" y="70" width="104" height="14" fill="#fff"/>
+                </g>
+
+                <g class="halo" opacity="0.95">
+                    <rect x="166" y="48" width="108" height="12" fill="#fff6ac"/>
+                    <rect x="142" y="60" width="24" height="12" fill="#fff6ac"/>
+                    <rect x="274" y="60" width="24" height="12" fill="#fff6ac"/>
+                    <rect x="166" y="72" width="108" height="12" fill="#ffe078"/>
+                </g>
+
+                <g class="dog-body">
+                    <g class="tail">
+                        <rect x="326" y="220" width="24" height="24" fill="var(--dog-black)"/>
+                        <rect x="350" y="196" width="24" height="24" fill="var(--dog-black)"/>
+                        <rect x="366" y="164" width="24" height="32" fill="var(--dog-black)"/>
+                        <rect x="358" y="140" width="24" height="24" fill="var(--dog-soft-black)"/>
+                        <rect x="342" y="124" width="20" height="20" fill="var(--dog-soft-black)"/>
+                    </g>
+
+                    <rect x="118" y="226" width="204" height="78" fill="var(--dog-black)"/>
+                    <rect x="94" y="250" width="252" height="54" fill="var(--dog-black)"/>
+                    <rect x="126" y="238" width="188" height="66" fill="var(--shirt)"/>
+                    <rect x="126" y="252" width="188" height="12" fill="var(--shirt-stripe)"/>
+                    <rect x="126" y="280" width="188" height="12" fill="var(--shirt-stripe)"/>
+                    <rect x="100" y="244" width="28" height="46" fill="var(--shirt)"/>
+                    <rect x="312" y="244" width="28" height="46" fill="var(--shirt)"/>
+                    <rect x="186" y="218" width="68" height="22" fill="#fff2df"/>
+
+                    <rect x="106" y="300" width="38" height="58" fill="var(--dog-black)"/>
+                    <g class="front-left-leg">
+                        <rect x="150" y="302" width="34" height="58" fill="var(--dog-tan)"/>
+                        <rect x="144" y="356" width="46" height="20" fill="var(--dog-tan)"/>
+                    </g>
+                    <g class="front-right-leg">
+                        <rect x="256" y="302" width="34" height="58" fill="var(--dog-tan)"/>
+                        <rect x="250" y="356" width="46" height="20" fill="var(--dog-tan)"/>
+                    </g>
+                    <rect x="296" y="300" width="38" height="58" fill="var(--dog-black)"/>
+                    <rect x="98" y="354" width="54" height="20" fill="var(--dog-black)"/>
+                    <rect x="288" y="354" width="54" height="20" fill="var(--dog-black)"/>
+
+                    <g class="ear-left">
+                        <rect x="84" y="94" width="48" height="34" fill="var(--dog-black)"/>
+                        <rect x="54" y="110" width="54" height="42" fill="var(--dog-black)"/>
+                        <rect x="38" y="128" width="46" height="40" fill="var(--dog-black)"/>
+                        <rect x="64" y="122" width="32" height="28" fill="#4b332b"/>
+                    </g>
+                    <g class="ear-right">
+                        <rect x="300" y="96" width="52" height="34" fill="var(--dog-black)"/>
+                        <rect x="332" y="112" width="54" height="44" fill="var(--dog-black)"/>
+                        <rect x="356" y="132" width="36" height="38" fill="var(--dog-soft-black)"/>
+                        <rect x="332" y="124" width="32" height="28" fill="#4b332b"/>
+                    </g>
+
+                    <rect x="116" y="104" width="208" height="116" fill="var(--dog-black)"/>
+                    <rect x="96" y="132" width="248" height="72" fill="var(--dog-black)"/>
+                    <rect x="136" y="88" width="168" height="42" fill="var(--dog-soft-black)"/>
+                    <rect x="126" y="126" width="54" height="54" fill="var(--dog-brown)"/>
+                    <rect x="260" y="126" width="54" height="54" fill="var(--dog-brown)"/>
+                    <rect x="140" y="104" width="42" height="22" fill="var(--dog-tan)"/>
+                    <rect x="258" y="104" width="42" height="22" fill="var(--dog-tan)"/>
+                    <rect x="108" y="180" width="56" height="30" fill="#2a2525"/>
+                    <rect x="276" y="180" width="56" height="30" fill="#2a2525"/>
+
+                    <g class="eyes-open">
+                        <rect x="138" y="138" width="34" height="38" fill="#f8e6d6"/>
+                        <rect x="268" y="138" width="34" height="38" fill="#f8e6d6"/>
+                        <rect x="146" y="146" width="22" height="24" fill="#2d1f1b"/>
+                        <rect x="272" y="146" width="22" height="24" fill="#2d1f1b"/>
+                        <rect x="156" y="144" width="8" height="8" fill="#fffaf0"/>
+                        <rect x="284" y="144" width="8" height="8" fill="#fffaf0"/>
+                    </g>
+                    <g class="eyes-closed">
+                        <rect x="138" y="154" width="36" height="8" fill="#2d1f1b"/>
+                        <rect x="266" y="154" width="36" height="8" fill="#2d1f1b"/>
+                    </g>
+
+                    <rect x="188" y="166" width="64" height="46" fill="var(--muzzle)"/>
+                    <rect x="174" y="184" width="92" height="38" fill="var(--muzzle)"/>
+                    <rect x="204" y="156" width="32" height="24" fill="#09090c"/>
+                    <rect x="210" y="160" width="10" height="8" fill="#3f3c43"/>
+                    <rect x="214" y="180" width="12" height="22" fill="#33272a"/>
+                    <rect x="190" y="204" width="60" height="12" fill="#fff9f0"/>
+                    <rect x="206" y="212" width="28" height="18" fill="#fff9f0"/>
+
+                    <rect x="156" y="196" width="34" height="6" fill="#fff9f0"/>
+                    <rect x="250" y="196" width="34" height="6" fill="#fff9f0"/>
+                    <rect x="144" y="210" width="42" height="6" fill="#f4eadb"/>
+                    <rect x="254" y="210" width="42" height="6" fill="#f4eadb"/>
+
+                    <rect x="118" y="168" width="10" height="10" fill="#5c463f"/>
+                    <rect x="312" y="168" width="10" height="10" fill="#5c463f"/>
+                    <rect x="118" y="188" width="8" height="8" fill="#5c463f"/>
+                    <rect x="314" y="188" width="8" height="8" fill="#5c463f"/>
+                </g>
+
+                <g class="water-drops">
+                    <rect x="66" y="118" width="10" height="18" fill="#88e3ff"/>
+                    <rect x="88" y="92" width="8" height="14" fill="#c8f5ff"/>
+                    <rect x="354" y="104" width="10" height="18" fill="#88e3ff"/>
+                    <rect x="382" y="138" width="8" height="14" fill="#c8f5ff"/>
+                    <rect x="72" y="238" width="8" height="14" fill="#88e3ff"/>
+                    <rect x="358" y="250" width="8" height="14" fill="#88e3ff"/>
+                </g>
+            </svg>
+        </div>
+
+        <form class="message-board" onsubmit="sendMessage(event)">
+            <input type="text" id="user-input" placeholder="想对憨豆说点什么，她会在云朵上收到">
+            <button type="submit">送到彩虹桥</button>
+        </form>
+    </main>
+
+    <script>
+        const dogMessages = [
+            "我很开心，真的。这里的草地软软的，我跑起来一点也不累。",
+            "我已经到彩虹桥啦，每天都有暖暖的阳光照着我。",
+            "别担心我，我会在云朵上看着你们吃饭、睡觉、好好生活。",
+            "我还穿着那件绿黑条纹小衣服呢，风吹过来很舒服。",
+            "我知道你们很想我。我也想你们，但我现在很平安。",
+            "你们笑的时候，我的小尾巴就会摇得更快。",
+            "我在这里交到了新朋友，也会把你们的爱认真收好。",
+            "不要一直哭哦，我希望你们带着我的爱继续过好每一天。",
+            "我永远记得被你们抱着、摸摸头、叫我名字的日子。",
+            "如果晚上看到一颗亮亮的小星星，那就是我在说：我很好。"
+        ];
+
+        const responses = [
+            "我收到啦，这份想念会变成今晚最亮的小星星。",
+            "我也爱你们。别怕，我只是去了一个很温柔的地方。",
+            "答应我，要好好吃饭，好好睡觉，也要偶尔笑一笑。",
+            "我会带着你们给我的爱，在彩虹桥上开心地跑。",
+            "你们想我的时候，就看看天空，我一直都听得到。",
+            "谢谢你们给过我的家，那是我最幸福的地方。"
+        ];
+
+        const bubble = document.getElementById("dog-bubble");
+        const dog = document.getElementById("dog-container");
+        const input = document.getElementById("user-input");
+        const dogStates = [
+            "",
+            "state-christmas",
+            "state-walk",
+            "state-wet"
+        ];
+        let currentState = "";
+
+        function showMessage(message) {
+            bubble.innerText = message || dogMessages[Math.floor(Math.random() * dogMessages.length)];
+            bubble.classList.add("show");
+            window.clearTimeout(showMessage.hideTimer);
+            showMessage.hideTimer = window.setTimeout(() => {
+                bubble.classList.remove("show");
+            }, 6200);
+        }
+
+        function makeParticle(className, text, x, y, delay = 0) {
+            window.setTimeout(() => {
+                const el = document.createElement("div");
+                el.className = className;
+                el.innerText = text;
+                el.style.left = `${x}px`;
+                el.style.top = `${y}px`;
+                document.body.appendChild(el);
+                window.setTimeout(() => el.remove(), 5600);
+            }, delay);
+        }
+
+        function setDogState(nextState) {
+            dog.classList.remove("state-christmas", "state-walk", "state-wet");
+            currentState = nextState;
+            if (currentState) {
+                dog.classList.add(currentState);
+            }
+            showMessage();
+        }
+
+        function randomizeDogState() {
+            const nextState = dogStates[Math.floor(Math.random() * dogStates.length)];
+            setDogState(nextState);
+        }
+
+        function interactDog(message) {
+            if (message) {
+                showMessage(message);
+            } else {
+                randomizeDogState();
+            }
+
+            const rect = dog.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const topY = rect.top + rect.height * 0.35;
+
+            for (let i = 0; i < 5; i += 1) {
+                makeParticle("heart-particle", "♥", centerX + Math.random() * 100 - 50, topY + Math.random() * 50, i * 140);
+            }
+
+            for (let i = 0; i < 4; i += 1) {
+                makeParticle("paw-particle", "♦", rect.left + rect.width * (0.25 + i * 0.16), rect.bottom - 34, i * 100);
+            }
+
+            if (currentState === "state-wet") {
+                for (let i = 0; i < 8; i += 1) {
+                    makeParticle("paw-particle", "◆", centerX + Math.random() * 180 - 90, topY + Math.random() * 80 - 20, i * 70);
+                }
+            }
+        }
+
+        function sendMessage(event) {
+            event.preventDefault();
+            const text = input.value.trim();
+            if (!text) return;
+
+            const boardRect = document.querySelector(".message-board").getBoundingClientRect();
+            makeParticle("floating-text", text, boardRect.left + boardRect.width / 2, boardRect.top - 8);
+            input.value = "";
+
+            window.setTimeout(() => {
+                interactDog(responses[Math.floor(Math.random() * responses.length)]);
+            }, 1200);
+        }
+
+        dog.addEventListener("keydown", (event) => {
+            if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                interactDog();
+            }
+        });
+
+        window.setTimeout(() => showMessage(), 700);
+        window.setInterval(randomizeDogState, 6500);
+        window.setInterval(() => showMessage(), 13000);
+    </script>
+</body>
+</html>
