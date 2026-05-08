@@ -521,7 +521,7 @@
             <div id="dog-bubble" class="bubble bubble-center">
                 <span id="bubble-text" class="bubble-text">我已经到彩虹桥啦，每天都有暖暖的阳光照着我。</span>
             </div>
-            <img id="handou-head" class="real-head" src="handou-assets/handou-cutout-01-santa.png" alt="憨豆的照片抠图">
+            <img id="handou-head" class="real-head" src="handou-assets/handou-cutout-01-santa.png?v=20260508-2145" alt="憨豆的照片抠图">
 
             <svg class="dog-svg" viewBox="0 0 440 420" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                 <defs>
@@ -652,6 +652,7 @@
             "谢谢你们给过我的家，那是我最幸福的地方。"
         ];
 
+        const ASSET_VERSION = "20260508-2145";
         const bubble = document.getElementById("dog-bubble");
         const bubbleText = document.getElementById("bubble-text");
         const dog = document.getElementById("dog-container");
@@ -667,7 +668,7 @@
             "handou-assets/handou-cutout-07-bed-look.png",
             "handou-assets/handou-cutout-08-scarf-side.png",
             "handou-assets/handou-cutout-09-shaved-full.png"
-        ];
+        ].map((src) => `${src}?v=${ASSET_VERSION}`);
         let currentHeadIndex = 0;
         const bubblePositions = ["bubble-left", "bubble-right", "bubble-center"];
 
